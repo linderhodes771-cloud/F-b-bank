@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>F&F Bank</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body{margin:0;font-family:Arial,sans-serif;background:#e5e7eb;display:flex;justify-content:center;padding:20px;}
+    .phone{width:360px;background:white;border-radius:25px;box-shadow:0 10px 30px rgba(0,0,0,0.2);overflow:hidden;position:relative;}
+    .screen{padding:20px;display:none;}
+    .active{display:block;}
+    .menu-btn{position:absolute;top:12px;left:12px;font-size:24px;background:transparent;border:none;cursor:pointer;z-index:20;}
+    .side-menu{position:fixed;top:0;left:-240px;width:240px;height:100%;background:#1e1e1e;color:white;transition:0.3s;padding-top:60px;z-index:15;overflow-y:auto;}
+    .side-menu button{display:block;width:100%;padding:15px;background:none;border:none;color:white;text-align:left;font-size:16px;cursor:pointer;}
+    #overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.4);z-index:10;display:none;}
+    button{width:100%;padding:14px;border:none;border-radius:12px;margin:8px 0;cursor:pointer;font-size:16px;text-align:left;}
+    input,select{width:100%;padding:12px;margin:6px 0;border-radius:8px;border:1px solid #ccc;}
+    .modal{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;padding:20px;border-radius:15px;box-shadow:0 5px 15px rgba(0,0,0,0.3);z-index:50;width:90%;max-width:300px;}
+    .transaction-list{max-height:250px;overflow-y:auto;background:#f3f4f6;padding:10px;border-radius:12px;margin-top:10px;}
+    .transaction-item{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #ddd;font-size:14px;}
+    .transaction-deposit{color:green;}
+    .transaction-withdraw{color:red;}
+    .notification{position:fixed;top:20px;right:20px;background:#2563eb;color:white;padding:12px 20px;border-radius:10px;box-shadow:0 3px 10px rgba(0,0,0,0.2);opacity:0;transition:0.5s;z-index:100;}
+    .card-tile{display:flex;align-items:center;justify-content:center;flex-direction:column;flex:1 1 48%;padding:16px;border-radius:15px;box-shadow:0 4px 12px rgba(0,0,0,0.1);color:white;font-weight:bold;font-size:16px;cursor:pointer;text-align:center;margin-bottom:10px;transition:transform 0.2s;}
+    .card-tile:hover{transform:translateY(-3px);}
+    .header{background:linear-gradient(135deg,#2563eb,#1e40af);color:white;font-size:16px;font-weight:bold;text-align:center;padding:4px 0;border-bottom-left-radius:25px;border-bottom-right-radius:25px;position:relative;box-shadow:0 4px 10px rgba(0,0,0,0.2);display:flex;flex-direction:column;align-items:center;}
+    .header span.bank-name{background: linear-gradient(90deg,#fcd34d,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-shadow:1px 1px 2px rgba(0,0,0,0.3);margin-bottom:2px;font-size:18px;}
+    .header span.bank-icon{position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:20px;}
+    .balance-card{background: linear-gradient(135deg,#4ade80,#16a34a);border-radius:20px;padding:20px;box-shadow:0 6px 15px rgba(0,0,0,0.15);margin-bottom:20px;color:white;}
+
+    /* New: Dashboard wallpaper */
+    #dashboard{
+      background-image: url('https://images.unsplash.com/photo-1612831667172-5fcb5d7a39d0?auto=format&fit=crop&w=360&q=80');
+      background-size: cover;
+      background-position: center;
+      border-radius: 0 0 25px 25px;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+<div id="overlay" onclick="toggleMenu()"></div>
+<div class="phone" id="app">
+
+  <!-- LOGIN -->
+  <div class="screen active" id="loginScreen">
+    <h2 style="text-align:center;">F&amp;F BANK Login</h2>
+    <input type="text" id="username" placeholder="Username">
+    <input type="password" id="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+  </div>
+
+  <!-- APP -->
+  <div id="appContainer" style="display:none;">
+
+    <!-- Side Menu -->
+    <div class="side-menu" id="sideMenu">
+      <h3 style="padding-left:15px;">🏠 Accounts</h3>
+      <button onclick="showTransactionsScreen()">Transactions</button>
+      <button onclick="alert('Accounts summary')">Accounts summary</button>
+      <button onclick="alert('Statements & documents')">Statements</button>
+
+      <h3 style="padding-left:15px;">💸 Payments & Transfers</h3>
+      <button onclick="openModal('transfer')">Transfer & Pay</button>
+      <button onclick="openModal('zelle')">Send Money with Zelle®</button>
+      <button onclick="openModal('paybills')">Pay Bills</button>
+      <button onclick="openModal('external')">External transfers</button>
+
+      <h3 style="padding-left:15px;">💳 Card Services</h3>
+      <button onclick="toggleCard()">Manage cards</button>
+      <button onclick="activateCard()">Activate Card</button>
+
+      <h3 style="padding-left:15px;">📷 Deposits</h3>
+      <button onclick="openModal('deposit')">Deposit a Check</button>
+
+      <h3 style="padding-left:15px;">🚪 Logout</h3>
+      <button onclick="logo
